@@ -1,0 +1,11 @@
+name: caelestia_theme_plugin_tool
+description: Compiles the Caelestia theme sources into Hetu bytecode for Spotube.
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  # Pinned to the version Spotube resolves, so the emitted bytecode matches
+  # what the app's Hetu VM expects. Bump it only together with Spotube's.
+  hetu_script: 0.4.2+1

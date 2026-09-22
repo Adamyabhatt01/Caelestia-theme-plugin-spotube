@@ -1,0 +1,7 @@
+# Build intermediates: plugin.out is compiled from src/, then packed into
+# plugin.smplug, which is what gets committed.
+*/plugin.out
+
+tool/.dart_tool/
+**/.DS_Store
+.idea/
