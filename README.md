@@ -13,7 +13,30 @@ contract.
 | --- | --- | --- |
 | `caelestia` | Matches the active Caelestia shell scheme: glass surfaces, shell background, dynamic Material colour | `https://raw.githubusercontent.com/Adamyabhatt01/Caelestia-theme-plugin-spotube/main/caelestia/plugin.smplug` |
 | `caelestia-glassier` | Thinner surfaces than the base theme: more transparency, more blur, a lighter veil over the shell background | `https://raw.githubusercontent.com/Adamyabhatt01/Caelestia-theme-plugin-spotube/main/caelestia-glassier/plugin.smplug` |
+| `caelestia-shell` | The glassier backdrop with more opaque surfaces, so text survives a bright wallpaper | `https://raw.githubusercontent.com/Adamyabhatt01/Caelestia-theme-plugin-spotube/main/caelestia-shell/plugin.smplug` |
 | `caelestia-plain` | The base palette with no desktop backdrop and no shell-derived glass | `https://raw.githubusercontent.com/Adamyabhatt01/Caelestia-theme-plugin-spotube/main/caelestia-plain/plugin.smplug` |
+| `spotify-shell` | A Spotify-shaped shell instead of the Caelestia one: black and green, inset content, rail navigation, seek bar below the player | `https://raw.githubusercontent.com/Adamyabhatt01/Caelestia-theme-plugin-spotube/main/spotify-shell/plugin.smplug` |
+
+### Which one should you install?
+
+| Theme | Choose it if… |
+| --- | --- |
+| `caelestia` | You want the safe, conservative Caelestia look. Surfaces at 65%, a 70% white veil over the wallpaper: readable, and the wallpaper still shows. **Start here.** |
+| `caelestia-glassier` | You want maximum glass — the most desktop showing through. Surfaces at 55% and a 40% veil. Best on a dark wallpaper; text can wash out on a bright one. |
+| `caelestia-shell` | You want the glass look but readable text. The glassier backdrop with surfaces at 75%. **Best with real transparency on.** |
+| `caelestia-plain` | You want no wallpaper and no veil at all — a flat, quiet surface. With real transparency on it is completely clear. |
+| `spotify-shell` | You want Spotube to look like Spotify rather than like your desktop shell. Works on every platform. |
+
+Under real window transparency (Linux, with the host setting on) the wallpaper
+and its blur are not painted at all: the veil decides how much of the desktop
+shows through — about 30% for `caelestia`, 60% for `caelestia-glassier` and
+`caelestia-shell`, and everything for `caelestia-plain`. `spotify-shell` does
+not ask for transparency and stays opaque.
+
+The Caelestia themes need the [Caelestia shell](https://github.com/caelestia-dots/shell)
+for the live wallpaper and palette; without it you still get the static
+palette, the glass and the layout. `spotify-shell` needs nothing but the app.
+
 
 ## Requirements
 

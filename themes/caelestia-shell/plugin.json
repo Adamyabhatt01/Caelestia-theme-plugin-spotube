@@ -1,1 +1,11 @@
-{"abilities": ["theme"], "apis": [], "author": "Spotube Test", "description": "Thin Caelestia shell theme (8L verification). DO NOT DISTRIBUTE.", "entryPoint": "CaelestiaTheme", "name": "Caelestia Shell Theme", "pluginApiVersion": "2.0.0", "version": "1.3.0"}
+{
+  "name": "Caelestia Shell Theme (Balanced)",
+  "description": "Caelestia glass with more opaque surfaces (75%): the desktop still shows through, but text stays readable over a bright wallpaper.",
+  "version": "1.4.0",
+  "author": "Adamya Bhatt",
+  "entryPoint": "CaelestiaTheme",
+  "pluginApiVersion": "2.0.0",
+  "apis": [],
+  "abilities": ["theme"],
+  "repository": "https://github.com/Adamyabhatt01/Caelestia-theme-plugin-spotube"
+}
