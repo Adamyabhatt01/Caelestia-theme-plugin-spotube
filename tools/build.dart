@@ -159,6 +159,10 @@ Future<void> main(List<String> arguments) async {
   if (failed) exitCode = 1;
 }
 
+/// The repository root a theme lives in.
+String repoRootOf(ThemeSource theme) =>
+    p.dirname(p.dirname(p.absolute(theme.directory.path)));
+
 /// The modification time of every theme source, keyed by path.
 ///
 /// Polling instead of a file-system watcher: the tool has no watch
@@ -256,6 +260,16 @@ Future<_BuildResult> _buildTheme({
     entries: entries,
   );
 
+  // The published path is the install URL: the app is handed a raw GitHub
+  // URL, so the artifact has to sit exactly where the README says it does.
+  String? publishedPath;
+  if (theme.publishPath != null) {
+    publishedPath = p.join(repoRootOf(theme), theme.publishPath!);
+    final published = File(publishedPath);
+    published.parent.createSync(recursive: true);
+    published.writeAsBytesSync(outputFile.readAsBytesSync());
+  }
+
   return _BuildResult(
     issues: report?.issues ?? const [],
     report: report,
@@ -271,7 +285,8 @@ Future<_BuildResult> _buildTheme({
       'file': theme.artifactName,
       'bytes': outputFile.lengthSync(),
       'sha256': sha256OfFile(outputFile),
-      'roles': theme.manifest['roles'],
+      if (publishedPath != null)
+        'published': p.relative(publishedPath, from: repoRootOf(theme)),
     },
   );
 }

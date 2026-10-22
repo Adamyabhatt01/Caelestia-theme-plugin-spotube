@@ -1,19 +1,32 @@
-DART ?= dart
-PLUGINS := caelestia caelestia-glassier
+DART ?= fvm dart
 
-.PHONY: deps compile archive
+# The theme plugins live in themes/<id>/; the toolchain compiles them, runs
+# them, validates the payload they produce and packages them into dist/.
+#
+#   make build     compile, validate and package every theme
+#   make check     validate only, write nothing (this is the CI gate)
+#   make test      the contract's tests
+#   make publish   refresh the golden payloads in conformance/
+#
+.PHONY: deps build check test conformance install clean
 
 deps:
-	cd tool && $(DART) pub get
+	$(DART) pub get
 
-compile: deps
-	@for plugin in $(PLUGINS); do \
-	  (cd tool && $(DART) run compile_plugin.dart ../$$plugin/src/caelestia_theme.ht ../$$plugin/plugin.out); \
-	done
+build: deps
+	$(DART) run tools/build.dart
 
-# Fresh archive each time: packing in append mode would leave a stale entry
-# behind if a plugin ever lost a file.
-archive: compile
-	@for plugin in $(PLUGINS); do \
-	  python3 tool/pack_smplug.py $$plugin; \
-	done
+check: deps
+	$(DART) run tools/build.dart --check
+
+test: deps
+	$(DART) test
+
+conformance: deps
+	$(DART) run tools/export.dart
+
+install: deps
+	$(DART) run tools/install.dart $(ARGS)
+
+clean:
+	rm -rf build .dart_tool

@@ -23,6 +23,7 @@ class ThemeSource {
     required this.manifestBytes,
     required this.source,
     required this.includes,
+    this.publishPath,
   });
 
   /// Directory name under `themes/`, and the artifact prefix in `dist/`.
@@ -45,6 +46,13 @@ class ThemeSource {
 
   /// Include paths that were resolved, in resolution order.
   final List<String> includes;
+
+  /// Where the built artifact is published inside the repository, if at all.
+  ///
+  /// The install URLs people paste into the app are raw GitHub URLs, so the
+  /// published path is part of the contract with whoever installed the
+  /// theme: it cannot move without breaking their install.
+  final String? publishPath;
 
   String get name => manifest['name'] as String? ?? id;
 
@@ -100,6 +108,19 @@ List<ThemeSource> loadThemes(String repoRoot) {
         as Map<String, dynamic>;
     final resolved = resolveIncludes(sourceFile.readAsStringSync(), repoRoot);
 
+    // `build.json` is build configuration, not part of the plugin: the app
+    // never sees it.
+    String? publishPath;
+    final buildFile = File('${entity.path}/build.json');
+    if (buildFile.existsSync()) {
+      final build = jsonDecode(buildFile.readAsStringSync())
+          as Map<String, dynamic>;
+      final publish = build['publish'];
+      if (publish is String && publish.isNotEmpty) {
+        publishPath = publish;
+      }
+    }
+
     themes.add(ThemeSource(
       id: entity.path.split(Platform.pathSeparator).last,
       directory: entity,
@@ -107,6 +128,7 @@ List<ThemeSource> loadThemes(String repoRoot) {
       manifestBytes: manifestFile.readAsBytesSync(),
       source: resolved.source,
       includes: resolved.includes,
+      publishPath: publishPath,
     ));
   }
 

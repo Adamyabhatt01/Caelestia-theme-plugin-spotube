@@ -1,33 +1,47 @@
 {
-  "generatedAt": "2026-10-22T12:03:20.555118Z",
+  "generatedAt": "2026-10-22T12:32:28.505206Z",
   "themes": [
     {
-      "id": "caelestia-glassier",
+      "id": "caelestia",
       "name": "Caelestia Shell Theme",
-      "author": "Spotube Test",
+      "author": "Adamya Bhatt",
       "version": "1.2.0",
       "entryPoint": "CaelestiaTheme",
       "abilities": [
         "theme"
       ],
-      "file": "caelestia-glassier-1.2.0.smplug",
-      "bytes": 1204,
-      "sha256": "7c0d2b15e95b60c4f4cfaf6c6cf464b6f7de2cec511c8bb267d2a28d24eb07e9",
-      "roles": null
+      "file": "caelestia-1.2.0.smplug",
+      "bytes": 1262,
+      "sha256": "c3b4deb6bfab0844841d6f59380cff0b50b677acab9f554855a1a037c9f5d986",
+      "published": "caelestia/plugin.smplug"
+    },
+    {
+      "id": "caelestia-glassier",
+      "name": "Caelestia Shell Theme (Glassier)",
+      "author": "Adamya Bhatt",
+      "version": "1.3.0",
+      "entryPoint": "CaelestiaTheme",
+      "abilities": [
+        "theme"
+      ],
+      "file": "caelestia-glassier-1.3.0.smplug",
+      "bytes": 1294,
+      "sha256": "47319ad6eea1f63d458fd80f0574c0cca55d124a809f717e5a3d86c0879cfbbc",
+      "published": "caelestia-glassier/plugin.smplug"
     },
     {
       "id": "caelestia-plain",
-      "name": "Caelestia Plain",
-      "author": "Spotube Test",
+      "name": "Caelestia Plain Theme",
+      "author": "Adamya Bhatt",
       "version": "1.1.0",
       "entryPoint": "CaelestiaTheme",
       "abilities": [
         "theme"
       ],
       "file": "caelestia-plain-1.1.0.smplug",
-      "bytes": 1171,
-      "sha256": "7e0f9d25d160724ed7ac1605ece3e521c588c9a785314e918c7c8ce725392664",
-      "roles": null
+      "bytes": 1251,
+      "sha256": "d7b736b81d08dae201bb63df1191743e11ba3398046c282fa95ecd34fbcc6b8d",
+      "published": "caelestia-plain/plugin.smplug"
     },
     {
       "id": "caelestia-shell",
@@ -40,22 +54,7 @@
       ],
       "file": "caelestia-shell-1.3.0.smplug",
       "bytes": 1196,
-      "sha256": "7c888c80234e18dbfab2d13be17817ceec8ccbf00b5a8880c44906362378a72f",
-      "roles": null
-    },
-    {
-      "id": "caelestia-theme",
-      "name": "Caelestia Shell Theme",
-      "author": "Spotube Test",
-      "version": "1.1.0",
-      "entryPoint": "CaelestiaTheme",
-      "abilities": [
-        "theme"
-      ],
-      "file": "caelestia-theme-1.1.0.smplug",
-      "bytes": 1194,
-      "sha256": "7f8e04a293c0f611783873b190768cae22b383d08cd18d87be73e861f4661619",
-      "roles": null
+      "sha256": "882f982d4a32ea757a5369d73ef4a275bf0aa185cf88d1c1b69065cf791ac75d"
     },
     {
       "id": "spotify-shell",
@@ -68,8 +67,7 @@
       ],
       "file": "spotify-shell-1.0.0.smplug",
       "bytes": 1227,
-      "sha256": "3c2132960340658f2da16d47e57959cba1ab000ca4539baa878246545539258d",
-      "roles": null
+      "sha256": "a33eae5cebb121617c171f93303edb728f075cfba55d046c836245dea8422b75"
     }
   ]
 }
