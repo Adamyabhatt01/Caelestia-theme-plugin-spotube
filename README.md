@@ -1,5 +1,11 @@
 # Spotube Theme Plugins
 
+> **This repository has moved.** It now lives in the app repository at
+> [`Adamyabhatt01/spotube`](https://github.com/Adamyabhatt01/spotube/tree/master/themes),
+> under `themes/`, so the contract's tests and the app that enforces them are
+> in one checkout. Development continues there; this repository is kept as an
+> archive and receives no further changes.
+
 Theme plugins for Spotube: the sources, the payload contract they have to
 satisfy, and the tooling that turns a source file into an installable
 `.smplug`.
