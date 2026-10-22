@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:args/args.dart';
 
-import 'lib/compile.dart';
-import 'lib/validator.dart';
+import '../lib/compile.dart';
+import '../lib/validator.dart';
 
 /// Inspects a built theme: what payload it produces, and whether two builds
 /// agree.

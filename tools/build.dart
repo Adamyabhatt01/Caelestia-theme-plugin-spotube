@@ -6,10 +6,10 @@ import 'dart:typed_data';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as p;
 
-import 'lib/compile.dart';
-import 'lib/packager.dart';
-import 'lib/theme_source.dart';
-import 'lib/validator.dart';
+import '../lib/compile.dart';
+import '../lib/packager.dart';
+import '../lib/theme_source.dart';
+import '../lib/validator.dart';
 
 /// Builds the theme plugins.
 ///

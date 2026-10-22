@@ -1,0 +1,585 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Adamyabhatt01/spotube-theme/schemas/theme.v3.schema.json",
+  "title": "Spotube theme payload, v3 (draft)",
+  "description": "The proposed v3 payload. Everything a v2 app already understands keeps working: a v2 app ignores the new blocks, so a v3 theme can ship to a v2 app unchanged. Nothing here is implemented in the app yet — this file is the contract the app will be built against.",
+  "type": "object",
+  "required": ["light", "dark"],
+  "additionalProperties": true,
+  "$defs": {
+    "color": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+      "description": "A hex color, or a role reference such as @primary. A role reference resolves against the palette the theme itself defines."
+    },
+    "palette": {
+      "type": "object",
+      "required": [
+        "background",
+        "foreground",
+        "card",
+        "cardForeground",
+        "primary",
+        "primaryForeground",
+        "secondary",
+        "secondaryForeground",
+        "muted",
+        "mutedForeground",
+        "accent",
+        "accentForeground",
+        "destructive",
+        "destructiveForeground",
+        "border",
+        "input",
+        "ring"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "background": {"$ref": "#/$defs/color"},
+        "foreground": {"$ref": "#/$defs/color"},
+        "card": {"$ref": "#/$defs/color"},
+        "cardForeground": {"$ref": "#/$defs/color"},
+        "primary": {"$ref": "#/$defs/color"},
+        "primaryForeground": {"$ref": "#/$defs/color"},
+        "secondary": {"$ref": "#/$defs/color"},
+        "secondaryForeground": {"$ref": "#/$defs/color"},
+        "muted": {"$ref": "#/$defs/color"},
+        "mutedForeground": {"$ref": "#/$defs/color"},
+        "accent": {"$ref": "#/$defs/color"},
+        "accentForeground": {"$ref": "#/$defs/color"},
+        "destructive": {"$ref": "#/$defs/color"},
+        "destructiveForeground": {"$ref": "#/$defs/color"},
+        "border": {"$ref": "#/$defs/color"},
+        "input": {"$ref": "#/$defs/color"},
+        "ring": {"$ref": "#/$defs/color"}
+      }
+    },
+    "role": {
+      "type": "string",
+      "pattern": "^@(primary|secondary|accent|muted|destructive|background|foreground|card|cardForeground|border|input|ring|success|warning|info|chart[1-6])$"
+    },
+    "colorOrRole": {
+      "oneOf": [
+        {"$ref": "#/$defs/color"},
+        {"$ref": "#/$defs/role"}
+      ]
+    },
+    "componentStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "padding": {"type": "number", "minimum": 0, "maximum": 48},
+        "margin": {"type": "number", "minimum": 0, "maximum": 48},
+        "gap": {"type": "number", "minimum": 0, "maximum": 48},
+        "radius": {"type": "number", "minimum": 0, "maximum": 64},
+        "borderWidth": {"type": "number", "minimum": 0, "maximum": 8},
+        "height": {"type": "number", "minimum": 0, "maximum": 400},
+        "width": {"type": "number", "minimum": 0, "maximum": 400},
+        "background": {"$ref": "#/$defs/colorOrRole"},
+        "foreground": {"$ref": "#/$defs/colorOrRole"},
+        "borderColor": {"$ref": "#/$defs/colorOrRole"},
+        "surfaceOpacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "surfaceBlur": {"type": "number", "minimum": 0, "maximum": 64},
+        "fontFamily": {"type": "string", "maxLength": 64},
+        "fontSize": {"type": "number", "minimum": 8, "maximum": 48},
+        "fontWeight": {"type": "number", "minimum": 100, "maximum": 900},
+        "iconSize": {"type": "number", "minimum": 8, "maximum": 64},
+        "indicatorColor": {"$ref": "#/$defs/colorOrRole"},
+        "thumbColor": {"$ref": "#/$defs/colorOrRole"},
+        "trackColor": {"$ref": "#/$defs/colorOrRole"}
+      }
+    },
+    "uiNode": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "row",
+            "column",
+            "stack",
+            "wrap",
+            "padding",
+            "align",
+            "expanded",
+            "scroll",
+            "text",
+            "icon",
+            "image",
+            "button",
+            "card",
+            "divider",
+            "spacer",
+            "gap",
+            "conditional",
+            "template"
+          ],
+          "description": "No text input, no form, no web view: a theme renders and reacts, it does not collect."
+        },
+        "props": {"type": "object"},
+        "children": {"type": "array", "items": {"$ref": "#/$defs/uiNode"}},
+        "actions": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "enum": [
+                  "navigate",
+                  "playPause",
+                  "next",
+                  "previous",
+                  "seek",
+                  "setVolume",
+                  "setShuffle",
+                  "setLoopMode",
+                  "like",
+                  "download",
+                  "openSettings",
+                  "toast",
+                  "plugin"
+                ]
+              },
+              "args": {"type": "object"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "specVersion": {"const": 3},
+    "light": {"$ref": "#/$defs/palette"},
+    "dark": {"$ref": "#/$defs/palette"},
+    "surfaces": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "blur": {"type": "number", "minimum": 0, "maximum": 100},
+        "tint": {"$ref": "#/$defs/color"}
+      }
+    },
+    "background": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {"enum": ["none", "albumArt", "shell", "asset"]},
+        "asset": {"type": "string", "pattern": "^asset://"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "blur": {"type": "number", "minimum": 0, "maximum": 100},
+        "overlay": {"$ref": "#/$defs/color"},
+        "transparent": {"type": "boolean"}
+      }
+    },
+    "radius": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "small": {"type": "number", "minimum": 0, "maximum": 48},
+        "medium": {"type": "number", "minimum": 0, "maximum": 48},
+        "large": {"type": "number", "minimum": 0, "maximum": 64},
+        "pill": {"type": "number", "minimum": 0, "maximum": 9999}
+      }
+    },
+    "density": {"type": "number", "minimum": 0.7, "maximum": 1.5},
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cardWidth": {"type": "number", "minimum": 80, "maximum": 400},
+        "cardHeight": {"type": "number", "minimum": 120, "maximum": 600},
+        "artistCardWidth": {"type": "number", "minimum": 80, "maximum": 480},
+        "artistCardHeight": {"type": "number", "minimum": 120, "maximum": 640},
+        "gutter": {"type": "number", "minimum": 0, "maximum": 40},
+        "fontFamily": {"type": "string", "maxLength": 64}
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {"type": "string", "maxLength": 64},
+        "monoFamily": {"type": "string", "maxLength": 64},
+        "brandFamily": {"type": "string", "maxLength": 64},
+        "styles": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "fontSize": {"type": "number", "minimum": 8, "maximum": 96},
+              "fontWeight": {"type": "number", "minimum": 100, "maximum": 900},
+              "height": {"type": "number", "minimum": 0.8, "maximum": 2.4},
+              "letterSpacing": {"type": "number", "minimum": -2, "maximum": 8},
+              "color": {"$ref": "#/$defs/colorOrRole"}
+            }
+          }
+        },
+        "fonts": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "required": ["family", "asset"],
+            "additionalProperties": false,
+            "properties": {
+              "family": {"type": "string", "maxLength": 64},
+              "asset": {"type": "string", "pattern": "^asset://"},
+              "weight": {"type": "number", "minimum": 100, "maximum": 900},
+              "style": {"enum": ["normal", "italic"]}
+            }
+          }
+        }
+      }
+    },
+    "spacing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "xs": {"type": "number", "minimum": 0, "maximum": 96},
+        "sm": {"type": "number", "minimum": 0, "maximum": 96},
+        "md": {"type": "number", "minimum": 0, "maximum": 96},
+        "lg": {"type": "number", "minimum": 0, "maximum": 96},
+        "xl": {"type": "number", "minimum": 0, "maximum": 96},
+        "xxl": {"type": "number", "minimum": 0, "maximum": 96},
+        "page": {"type": "number", "minimum": 0, "maximum": 96},
+        "section": {"type": "number", "minimum": 0, "maximum": 96}
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fast": {"type": "number", "minimum": 0, "maximum": 1000},
+        "normal": {"type": "number", "minimum": 0, "maximum": 1000},
+        "slow": {"type": "number", "minimum": 0, "maximum": 1000},
+        "easing": {
+          "enum": [
+            "linear",
+            "ease",
+            "easeIn",
+            "easeOut",
+            "easeInOut",
+            "easeOutCubic",
+            "easeInOutCubic"
+          ]
+        }
+      }
+    },
+    "scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "size": {"type": "number", "minimum": 0.5, "maximum": 2},
+        "text": {"type": "number", "minimum": 0.5, "maximum": 2},
+        "radius": {"type": "number", "minimum": 0.5, "maximum": 2}
+      }
+    },
+    "icons": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sm": {"type": "number", "minimum": 8, "maximum": 64},
+        "md": {"type": "number", "minimum": 8, "maximum": 64},
+        "lg": {"type": "number", "minimum": 8, "maximum": 64},
+        "xl": {"type": "number", "minimum": 8, "maximum": 64},
+        "overrides": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "asset": {"type": "string", "pattern": "^asset://"},
+              "size": {"type": "number", "minimum": 8, "maximum": 64}
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "buttons": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primary": {"$ref": "#/$defs/componentStyle"},
+            "secondary": {"$ref": "#/$defs/componentStyle"},
+            "outline": {"$ref": "#/$defs/componentStyle"},
+            "ghost": {"$ref": "#/$defs/componentStyle"},
+            "destructive": {"$ref": "#/$defs/componentStyle"},
+            "link": {"$ref": "#/$defs/componentStyle"},
+            "fixed": {"$ref": "#/$defs/componentStyle"},
+            "muted": {"$ref": "#/$defs/componentStyle"}
+          }
+        },
+        "card": {"$ref": "#/$defs/componentStyle"},
+        "input": {"$ref": "#/$defs/componentStyle"},
+        "tabs": {"$ref": "#/$defs/componentStyle"},
+        "nav": {"$ref": "#/$defs/componentStyle"},
+        "tooltip": {"$ref": "#/$defs/componentStyle"},
+        "badge": {"$ref": "#/$defs/componentStyle"},
+        "select": {"$ref": "#/$defs/componentStyle"},
+        "switch": {"$ref": "#/$defs/componentStyle"},
+        "slider": {"$ref": "#/$defs/componentStyle"},
+        "scrollbar": {"$ref": "#/$defs/componentStyle"},
+        "avatar": {"$ref": "#/$defs/componentStyle"},
+        "skeleton": {"$ref": "#/$defs/componentStyle"},
+        "progress": {"$ref": "#/$defs/componentStyle"},
+        "divider": {"$ref": "#/$defs/componentStyle"},
+        "menu": {"$ref": "#/$defs/componentStyle"},
+        "dropdown": {"$ref": "#/$defs/componentStyle"},
+        "modal": {"$ref": "#/$defs/componentStyle"}
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chrome": {"enum": ["flat", "inset"]},
+        "nav": {"enum": ["labels", "rail"]},
+        "progress": {"enum": ["inline", "below"]},
+        "navItems": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {"enum": ["home", "radio", "stats", "search"]}
+        },
+        "navbarItems": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {"enum": ["home", "search", "radio", "library", "stats"]}
+        },
+        "libraryItems": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {"enum": ["playlists", "artists", "albums", "local_library"]}
+        },
+        "player": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "dock": {"enum": ["full", "compact", "floating"]},
+            "showTrackDetails": {"type": "boolean"},
+            "showActions": {"type": "boolean"},
+            "showVolume": {"type": "boolean"},
+            "showLyrics": {"type": "boolean"},
+            "showProgress": {"type": "boolean"}
+          }
+        },
+        "home": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sections": {
+              "type": "array",
+              "maxItems": 20,
+              "items": {"enum": ["recent", "featured", "new_releases", "browse"]}
+            }
+          }
+        },
+        "settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sections": {
+              "type": "array",
+              "maxItems": 20,
+              "items": {
+                "enum": [
+                  "accounts",
+                  "language_region",
+                  "appearance",
+                  "sidebar",
+                  "playback",
+                  "downloads",
+                  "desktop",
+                  "developers",
+                  "about"
+                ]
+              }
+            }
+          }
+        },
+        "enforce": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "enum": [
+              "nav",
+              "navItems",
+              "libraryItems",
+              "navOrder",
+              "player",
+              "playerDock",
+              "volume",
+              "home",
+              "settings"
+            ]
+          },
+          "description": "A theme owns a layout only where it lists it here. Everywhere else the user's own settings win — a theme may not silently override an accessibility or ergonomics choice."
+        },
+        "responsive": {
+          "type": "object",
+          "maxProperties": 4,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "nav": {"enum": ["labels", "rail"]},
+              "navItems": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {"enum": ["home", "radio", "stats", "search"]}
+              },
+              "navbarItems": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {"enum": ["home", "search", "radio", "library", "stats"]}
+              },
+              "libraryItems": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {"enum": ["playlists", "artists", "albums", "local_library"]}
+              },
+              "player": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "dock": {"enum": ["full", "compact", "floating"]},
+                  "showTrackDetails": {"type": "boolean"},
+                  "showActions": {"type": "boolean"},
+                  "showVolume": {"type": "boolean"},
+                  "showLyrics": {"type": "boolean"},
+                  "showProgress": {"type": "boolean"}
+                }
+              },
+              "home": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "sections": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {"enum": ["recent", "featured", "new_releases", "browse"]}
+                  }
+                }
+              },
+              "settings": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "sections": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "enum": [
+                        "accounts",
+                        "language_region",
+                        "appearance",
+                        "sidebar",
+                        "playback",
+                        "downloads",
+                        "desktop",
+                        "developers",
+                        "about"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "branding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "appName": {"type": "string", "maxLength": 48},
+        "shortName": {"type": "string", "maxLength": 24},
+        "tagline": {"type": "string", "maxLength": 120},
+        "wordmark": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "text": {"type": "string", "maxLength": 48},
+            "fontFamily": {"type": "string", "maxLength": 64},
+            "asset": {"type": "string", "pattern": "^asset://"}
+          }
+        },
+        "logo": {"type": "string", "pattern": "^asset://"},
+        "titlebarTitle": {"type": "string", "maxLength": 48},
+        "windowTitle": {"type": "string", "maxLength": 48},
+        "aboutName": {"type": "string", "maxLength": 48},
+        "showHostAttribution": {
+          "type": "boolean",
+          "description": "Whether the About page shows the host's name, version and license. The host keeps the attribution surface whatever a theme says."
+        }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "specVersion": {"const": 1},
+        "slots": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "children": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {"$ref": "#/$defs/uiNode"}
+              },
+              "refreshSeconds": {"type": "number", "minimum": 0, "maximum": 3600}
+            }
+          }
+        },
+        "screens": {
+          "type": "object",
+          "maxProperties": 16,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {"type": "string", "maxLength": 80},
+              "showBack": {"type": "boolean"},
+              "children": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {"$ref": "#/$defs/uiNode"}
+              }
+            }
+          }
+        },
+        "templates": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "params": {"type": "array", "items": {"type": "string"}},
+              "children": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {"$ref": "#/$defs/uiNode"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

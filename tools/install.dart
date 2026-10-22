@@ -6,7 +6,7 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
-import 'lib/theme_source.dart';
+import '../lib/theme_source.dart';
 
 /// Installs a built theme into a Spotube profile.
 ///

@@ -6,8 +6,8 @@ import 'package:args/args.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as p;
 
-import 'lib/compile.dart';
-import 'lib/validator.dart';
+import '../lib/compile.dart';
+import '../lib/validator.dart';
 
 /// Validates a theme payload on its own.
 ///
