@@ -3,6 +3,36 @@
 The themes and the tool that builds them. The app's side of the contract is
 versioned separately — the payload is `v2` there, and `v3` is drafted here.
 
+## 1.5.0 — the whole v3 contract
+
+The payload is now complete: everything a theme may decide about the app, in
+one schema, one validator and one example.
+
+- **The contract** (`schemas/theme.v3.schema.json`) grew to cover everything
+  a theme can decide: the extra colour roles (popover, sidebar, status,
+  charts), typography, spacing, motion, scale, icon sizes and overrides, the
+  style of every shadcn component the app draws with, the shell's
+  composition, branding, the assets a theme ships, and the declarative UI
+  tree.
+- **`lib/v3_validator.dart`** enforces it: node types, bindings, actions,
+  asset paths, the id registries, the depth and size limits, the component
+  ranges. A theme that breaks a rule fails the build, not the app.
+- **The slot registry** is closed: a theme may only fill a slot the host
+  publishes, so a typo cannot silently disappear.
+- **`getUi()` and `onUiAction()`** are now part of the plugin contract: a
+  theme may answer with its own UI instead of carrying it in the payload, and
+  answer a `plugin` action with a new one. `themes/ui-demo` does both.
+- **Assets**: a theme's files are packaged with their paths preserved, and
+  the build checks that every `asset://` path a theme names is a file it
+  ships — and warns about the ones it ships but never uses.
+- **`themes/kitchen-sink`** carries every field the schema has, and a test
+  says so: a new field without an example fails the suite.
+- **CI** runs the analyzer, the tests and the build on every push, and checks
+  that the golden payloads are up to date.
+- **`tools/install.dart`** was given a library behind it (`lib/installer.dart`)
+  and a test: it writes the plugin into a profile and registers it, against a
+  real SQLite database.
+
 ## 1.4.0 — the toolchain
 
 The repository grew a build of its own, and the themes moved into it.

@@ -15,6 +15,8 @@ class CompiledTheme {
     required this.byteCode,
     required this.payload,
     required this.warning,
+    this.uiSpec,
+    this.optionalMethods = const [],
   });
 
   final Uint8List byteCode;
@@ -25,6 +27,15 @@ class CompiledTheme {
   /// A non-fatal problem found while evaluating (missing optional methods,
   /// a `getUi()` that threw, …).
   final String? warning;
+
+  /// The UI specification, if the theme answers `getUi()`.
+  ///
+  /// A theme may put its UI in the payload instead; both are the same
+  /// document, and the host accepts either.
+  final Map<String, dynamic>? uiSpec;
+
+  /// The optional methods this theme implements.
+  final List<String> optionalMethods;
 }
 
 /// Compiles theme source to Hetu bytecode.
@@ -69,11 +80,61 @@ var metadataPlugin = Plugin()
     throw StateError('getTheme() did not return a map');
   }
 
+  // The optional methods. A theme that implements them gets more; a theme
+  // that does not is not broken, so their absence is not an error.
+  final optional = <String>[];
+  for (final method in const ['getUi', 'onUiAction', 'showSettings']) {
+    if (theme.memberGet(method, throws: false) != null) {
+      optional.add(method);
+    }
+  }
+
+  Map<String, dynamic>? uiSpec;
+  String? warning;
+  if (optional.contains('getUi')) {
+    try {
+      uiSpec = await callThemeUi(hetu);
+      if (uiSpec == null) {
+        warning = 'getUi() returned nothing';
+      }
+    } catch (error) {
+      warning = 'getUi() failed: $error';
+    }
+  }
+
   return CompiledTheme(
     byteCode: byteCode,
     payload: payload,
-    warning: null,
+    warning: warning,
+    uiSpec: uiSpec,
+    optionalMethods: optional,
   );
+}
+
+/// The UI specification a theme answers with, or null when it has none.
+Future<Map<String, dynamic>?> callThemeUi(Hetu hetu) async {
+  final plugin = hetu.fetch('metadataPlugin') as HTInstance;
+  final theme = plugin.memberGet('theme') as HTInstance;
+  final result = await theme.invoke('getUi');
+  return _asJsonMap(result);
+}
+
+/// Calls a theme's own action handler.
+///
+/// The host dispatches a `plugin` action here; a theme may answer with a new
+/// UI specification or with nothing.
+Future<Map<String, dynamic>?> callThemeAction(
+  Hetu hetu, {
+  required String id,
+  Map<String, dynamic> payload = const {},
+}) async {
+  final plugin = hetu.fetch('metadataPlugin') as HTInstance;
+  final theme = plugin.memberGet('theme') as HTInstance;
+  final result = await theme.invoke(
+    'onUiAction',
+    positionalArgs: [id, payload],
+  );
+  return _asJsonMap(result);
 }
 
 /// Converts whatever the plugin returned into a plain JSON map.

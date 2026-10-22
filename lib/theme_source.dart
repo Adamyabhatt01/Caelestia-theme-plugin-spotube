@@ -92,6 +92,35 @@ class ThemeSource {
   }
 }
 
+/// Every `asset://` path in a payload, wherever it is nested.
+///
+/// A theme references its own files by path; the host resolves them inside the
+/// plugin's own directory. Collecting them is what lets the build check that
+/// a theme ships what it points at.
+Set<String> collectAssetPaths(Object? node) {
+  final paths = <String>{};
+  void walk(Object? value) {
+    if (value is String) {
+      if (value.startsWith('asset://')) paths.add(value.substring(8));
+      return;
+    }
+    if (value is Map) {
+      for (final entry in value.entries) {
+        walk(entry.value);
+      }
+      return;
+    }
+    if (value is List) {
+      for (final item in value) {
+        walk(item);
+      }
+    }
+  }
+
+  walk(node);
+  return paths;
+}
+
 /// Every theme directory under `themes/`, sorted by id.
 List<ThemeSource> loadThemes(String repoRoot) {
   final themesDir = Directory('$repoRoot/themes');

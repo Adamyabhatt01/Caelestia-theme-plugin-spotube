@@ -116,8 +116,8 @@ ValidationReport validateThemePayload(Map<String, dynamic> payload) {
     }
   }
 
-  final light = _palette(payload, 'light', issues);
-  final dark = _palette(payload, 'dark', issues);
+  final light = _palette(payload, 'light', issues, allowV3Roles: isV3);
+  final dark = _palette(payload, 'dark', issues, allowV3Roles: isV3);
 
   final surfaces = _map(payload, 'surfaces', issues);
   final background = _map(payload, 'background', issues);
@@ -162,8 +162,9 @@ ValidationReport validateThemePayload(Map<String, dynamic> payload) {
 Map<String, dynamic> _palette(
   Map<String, dynamic> payload,
   String key,
-  List<Issue> issues,
-) {
+  List<Issue> issues, {
+  bool allowV3Roles = false,
+}) {
   final raw = payload[key];
   if (raw is! Map) {
     issues.add(Issue(
@@ -207,8 +208,9 @@ Map<String, dynamic> _palette(
     palette[role] = value;
   }
 
+  final known = allowV3Roles ? {...colorRoles, ...v3PaletteRoles} : colorRoles;
   for (final extra in raw.keys) {
-    if (!colorRoles.contains(extra)) {
+    if (!known.contains(extra)) {
       issues.add(Issue(
         Severity.warning,
         '$key.$extra',

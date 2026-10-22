@@ -63,8 +63,10 @@ identifies a plugin by **name and author**.
 
 ```
 themes/<id>/         one theme: theme.ht (source) + plugin.json (manifest)
+                      + build.json (where the artifact is published)
                       + assets/ (optional, shipped inside the archive)
 sdk/                 shared Hetu source a theme can include
+lib/                 the validator, the palette SDK's host side, the installer
 tools/build.dart     compile → run → validate → package
 tools/validate.dart  validate a payload file
 tools/inspect.dart   print a built theme's payload, compare two builds
@@ -73,7 +75,8 @@ tools/export.dart    write each theme's payload to conformance/
 dist/                built artifacts (committed)
 dist/legacy/         artifacts that predate the toolchain, kept as-is
 conformance/         golden payloads used by the tests
-schemas/             the payload contract: v2 (frozen) and v3 (draft)
+schemas/             the payload contract: v2 (frozen) and v3
+.github/workflows/   the build, the tests and the goldens on every push
 ```
 
 ## Commands
@@ -98,6 +101,21 @@ fvm dart test                            # the contract's tests
 `build.dart` runs the theme before it packages it. A theme that compiles but
 returns nothing — or returns a color the app cannot parse — is a build
 failure here, not a user's blank app.
+
+## The themes
+
+| Theme | What it is |
+|---|---|
+| `caelestia` | Matches the active Caelestia shell scheme — published |
+| `caelestia-glassier` | The same, with thinner surfaces — published |
+| `caelestia-plain` | The base palette with no backdrop and no glass — published |
+| `caelestia-shell` | The balanced variant: readable text over a bright wallpaper — published |
+| `spotify-shell` | A Spotify-shaped shell: black and green, inset panel, rail navigation — published |
+| `minimal` | The SDK in nine lines: one seed colour |
+| `brand-demo` | The whole v3 payload, including a slot and a screen |
+| `ui-demo` | A theme that answers with its own UI (`getUi()`, `onUiAction()`) |
+| `asset-demo` | A theme that ships an image and points at it |
+| `kitchen-sink` | Every field the v3 payload has, in one theme |
 
 ## The payload
 
@@ -168,9 +186,17 @@ Shared source goes in `sdk/` and is pulled in with an include directive:
   build-time branding, not a theme.
 - It cannot load a font file; a font family has to exist on the machine.
 
-## Roadmap
+## v3
 
-The payload is v2 today. v3 adds typography, spacing, motion, scale, component
-styles, shell composition, branding, and a declarative UI tree — each step
-lands here first (schema, validator, fixtures, sample theme) and in the app
-second.
+`specVersion: 3` adds four kinds of decision on top of v2: more colour roles
+(popover, sidebar, status, charts), tokens (typography, spacing, motion,
+scale, icons), component styles, and the shell's composition — plus branding,
+assets and a declarative UI tree with slots, screens, bindings and actions.
+
+The contract is written down in `schemas/theme.v3.schema.json`, enforced by
+`lib/v3_validator.dart`, and demonstrated by `themes/kitchen-sink` — the theme
+that has to carry every field, so a new field without an example fails the
+test suite.
+
+A v2 host ignores all of it, which is what lets a v3 theme ship to an older
+app. `AUTHORING.md` is the full reference.

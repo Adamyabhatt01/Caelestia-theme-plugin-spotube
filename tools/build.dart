@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 import '../lib/compile.dart';
 import '../lib/packager.dart';
 import '../lib/theme_source.dart';
+import '../lib/v3_validator.dart';
 import '../lib/validator.dart';
 
 /// Builds the theme plugins.
@@ -220,6 +221,8 @@ Future<_BuildResult> _buildTheme({
     );
   }
 
+  final issues = <Issue>[];
+
   final Uint8List byteCode;
   try {
     byteCode = compileThemeSource(theme.source, sourceName: '${theme.id}_theme');
@@ -239,9 +242,43 @@ Future<_BuildResult> _buildTheme({
     report = validateThemePayload(compiled.payload);
   }
 
+  // A theme may answer `getUi()` with its own UI specification instead of
+  // carrying it in the payload. Same document, same rules.
+  if (compiled.uiSpec != null) {
+    for (final issue in validateUiSpec(compiled.uiSpec!)) {
+      (report ??= validateThemePayload(compiled.payload)).issues.add(issue);
+    }
+  }
+
+  // The files a theme points at have to exist: a theme that references an
+  // asset it does not ship renders an empty space and says nothing.
+  final declared = collectAssetPaths(compiled.payload);
+  if (compiled.uiSpec != null) {
+    declared.addAll(collectAssetPaths(compiled.uiSpec));
+  }
+  final shipped = theme.assets.keys.toSet();
+  for (final path in declared) {
+    if (!shipped.contains(path)) {
+      issues.add(Issue(
+        Severity.error,
+        'assets',
+        'points at $path, which the theme does not ship',
+      ));
+    }
+  }
+  for (final path in shipped) {
+    if (!declared.contains(path)) {
+      issues.add(Issue(
+        Severity.warning,
+        'assets/$path',
+        'shipped but never referenced — the host has no reason to load it',
+      ));
+    }
+  }
+
   if (check) {
     return _BuildResult(
-      issues: report?.issues ?? const [],
+      issues: [...?report?.issues, ...issues],
       report: report,
       summary: '${theme.id}: ${theme.version} — checked',
     );
@@ -271,7 +308,7 @@ Future<_BuildResult> _buildTheme({
   }
 
   return _BuildResult(
-    issues: report?.issues ?? const [],
+    issues: [...?report?.issues, ...issues],
     report: report,
     summary: '${theme.id}: ${theme.version} — ${theme.artifactName} '
         '(${outputFile.lengthSync()} bytes)',
@@ -285,6 +322,8 @@ Future<_BuildResult> _buildTheme({
       'file': theme.artifactName,
       'bytes': outputFile.lengthSync(),
       'sha256': sha256OfFile(outputFile),
+      'optionalMethods': compiled.optionalMethods,
+      'hasUiSpec': compiled.uiSpec != null,
       if (publishedPath != null)
         'published': p.relative(publishedPath, from: repoRootOf(theme)),
     },

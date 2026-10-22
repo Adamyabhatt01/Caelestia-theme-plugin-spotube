@@ -146,13 +146,50 @@ class ThemePalette {
     return fromHsl(hsl['h'], saturation, lightness)
   }
 
+  // Both schemes, derived from one seed colour — the seventeen roles a v2
+  // host reads.
+  //
+  // `fromSeedFull` returns the same two schemes with the v3 roles as well
+  // (popover, sidebar, the status colours and the chart palette). A theme
+  // that declares `specVersion: 3` wants those; one that does not must not
+  // carry them, because a v2 host warns about every field it does not know.
+  static fun fromSeed(seed) {
+    var full = ThemePalette.fromSeedFull(seed)
+    return {
+      'light': ThemePalette._only(full['light'], ThemePalette.v2Roles()),
+      'dark': ThemePalette._only(full['dark'], ThemePalette.v2Roles()),
+    }
+  }
+
+  // The seventeen roles a v2 payload carries.
+  static fun v2Roles() {
+    return [
+      'background', 'foreground', 'card', 'cardForeground',
+      'primary', 'primaryForeground', 'secondary', 'secondaryForeground',
+      'muted', 'mutedForeground', 'accent', 'accentForeground',
+      'destructive', 'destructiveForeground', 'border', 'input', 'ring',
+    ]
+  }
+
+  // The entries of `map` whose key is in `keys`.
+  static fun _only(map, keys) {
+    var out = {}
+    for (var i = 0; i < keys.length; i += 1) {
+      var key = keys[i]
+      if (map[key] != null) {
+        out[key] = map[key]
+      }
+    }
+    return out
+  }
+
   // Both schemes, derived from one seed colour.
   //
   // The seed decides the hue and how colourful the theme is; everything else
   // is the lightness ladder a readable interface needs. The destructive role
   // stays red on purpose: it is the one colour a user reads as "this went
   // wrong", and it is not the brand's to change.
-  static fun fromSeed(seed) {
+  static fun fromSeedFull(seed) {
     var hsl = toHsl(seed)
     var h = hsl['h']
     var s = hsl['s']
@@ -177,6 +214,13 @@ class ThemePalette {
       'ring': _tone(hsl, s, 0.42),
     }
 
+    // The roles the app draws with that have no name of their own in v2: the
+    // popover, the sidebar, the status colours and the categorical chart
+    // palette. They are optional in the payload, but a theme that leaves them
+    // out gets the host's fallbacks instead of ones derived from its seed.
+    var chart = _categorical(h, s, 0.42)
+    var chartDark = _categorical(h, s, 0.68)
+
     var dark = {
       'background': _tone(hsl, s * 0.22, 0.075),
       'foreground': _tone(hsl, s * 0.10, 0.95),
@@ -197,6 +241,63 @@ class ThemePalette {
       'ring': _tone(hsl, s * 0.80, 0.68),
     }
 
-    return {'light': light, 'dark': dark}
+    return {
+      'light': ThemePalette._extras(light, chart, false),
+      'dark': ThemePalette._extras(dark, chartDark, true),
+    }
+  }
+
+  // The optional roles, derived from the same seed.
+  static fun _extras(base, chart, isDark) {
+    var out = ThemePalette.merge(base, {
+      'popover': base['card'],
+      'popoverForeground': base['cardForeground'],
+      'sidebar': base['muted'],
+      'sidebarForeground': base['foreground'],
+      'sidebarPrimary': base['primary'],
+      'sidebarPrimaryForeground': base['primaryForeground'],
+      'sidebarAccent': base['accent'],
+      'sidebarAccentForeground': base['accentForeground'],
+      'sidebarBorder': base['border'],
+      'sidebarRing': base['ring'],
+      'success': isDark ? '#4ade80' : '#16a34a',
+      'successForeground': isDark ? '#052e16' : '#ffffff',
+      'warning': isDark ? '#fbbf24' : '#b45309',
+      'warningForeground': isDark ? '#451a03' : '#ffffff',
+      'info': isDark ? '#60a5fa' : '#2563eb',
+      'infoForeground': isDark ? '#082f49' : '#ffffff',
+    })
+
+    for (var i = 0; i < 6; i += 1) {
+      out['chart' + (i + 1).toString()] = chart[i]
+    }
+    return out
+  }
+
+  // Six colours that stay apart: the seed's hue and five neighbours, each
+  // far enough to be told apart at a glance.
+  static fun _categorical(hue, saturation, lightness) {
+    var offsets = [0.0, 40.0, 80.0, 160.0, 200.0, 280.0]
+    var colors = []
+    for (var i = 0; i < offsets.length; i += 1) {
+      colors.add(fromHsl(
+        hue + offsets[i],
+        saturation < 0.55 ? 0.55 : saturation,
+        lightness
+      ))
+    }
+    return colors
+  }
+
+  // A copy of `base` with the entries of `overrides` applied.
+  static fun merge(base, overrides) {
+    var out = {}
+    for (var key in base.keys) {
+      out[key] = base[key]
+    }
+    for (var key in overrides.keys) {
+      out[key] = overrides[key]
+    }
+    return out
   }
 }

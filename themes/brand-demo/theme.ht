@@ -13,7 +13,7 @@
 // puts live player data in the sidebar.
 class AuroraThemeApi {
   fun getTheme() {
-    var schemes = ThemePalette.fromSeed('#3f7ae0')
+    var schemes = ThemePalette.fromSeedFull('#3f7ae0')
 
     return {
       'specVersion': 3,
