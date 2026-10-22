@@ -168,12 +168,33 @@ void main() {
     test('are a warning, not an error — that is what makes v3 shippable to v2',
         () {
       final payload = validPayload();
+      payload['somethingNew'] = {'a': 1};
+      final report = validateThemePayload(payload);
+      expect(report.hasErrors, isFalse);
+      expect(pathsOf(report, Severity.warning), contains('somethingNew'));
+    });
+
+    test('a declared v3 payload knows the v3 blocks', () {
+      final payload = validPayload();
       payload['specVersion'] = 3;
       payload['typography'] = {'family': 'Inter'};
+      payload['branding'] = {'appName': 'Aurora'};
       final report = validateThemePayload(payload);
       expect(report.hasErrors, isFalse);
       expect(pathsOf(report, Severity.warning),
-          containsAll(['specVersion', 'typography']));
+          isNot(contains('specVersion')));
+      expect(pathsOf(report, Severity.warning), isNot(contains('typography')));
+      expect(pathsOf(report, Severity.warning), isNot(contains('branding')));
+    });
+
+    test('a v3 block that breaks its own rules is an error', () {
+      final payload = validPayload();
+      payload['specVersion'] = 3;
+      payload['typography'] = {'family': 'Inter', 'styles': {'h1': {'fontSize': 400}}};
+      final report = validateThemePayload(payload);
+      expect(report.hasErrors, isFalse);
+      expect(pathsOf(report, Severity.warning),
+          contains('typography.styles.h1.fontSize'));
     });
   });
 

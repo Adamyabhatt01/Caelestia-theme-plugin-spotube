@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'v3_validator.dart';
+
 /// How loud a finding is.
 ///
 /// [error] means the host throws and the whole theme is discarded. [warning]
@@ -95,12 +97,21 @@ const knownTopLevelKeys = <String>[
 ValidationReport validateThemePayload(Map<String, dynamic> payload) {
   final issues = <Issue>[];
 
+  // A payload that declares v3 is allowed the v3 blocks; one that does not
+  // is a v2 payload, and anything outside v2 is a field the app ignores.
+  final specVersion = payload['specVersion'];
+  final isV3 = specVersion is num && specVersion >= 3;
+  final known = <String>{
+    ...knownTopLevelKeys,
+    if (isV3) ...v3TopLevelKeys,
+  };
+
   for (final key in payload.keys) {
-    if (!knownTopLevelKeys.contains(key)) {
+    if (!known.contains(key)) {
       issues.add(Issue(
         Severity.warning,
         key,
-        'not read by a v2 host — the app ignores this field',
+        'not read by the app — this field is ignored',
       ));
     }
   }
@@ -122,6 +133,10 @@ ValidationReport validateThemePayload(Map<String, dynamic> payload) {
   final resolvedDensity = _resolveDensity(payload['density'], issues);
   final resolvedDynamic =
       _resolveDynamic(_map(payload, 'dynamic', issues), issues);
+
+  if (isV3) {
+    issues.addAll(validateV3Blocks(payload));
+  }
 
   final hasErrors = issues.any((issue) => issue.severity == Severity.error);
   if (hasErrors) {
