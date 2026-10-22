@@ -14,7 +14,7 @@ Sandbox left RUNNING (PID 115300 at save time) — `launch-*.sh kill` to stop.
 ```
 
 Then in the sandbox app: Settings → Metadata Plugins → upload
-`/home/adamya/projects/spotube-theme/dist/caelestia-theme-1.1.0.smplug` →
+`/home/adamya/projects/spotube-theme/dist/caelestia-1.2.0.smplug` →
 Theme tab → Set default theme.
 
 Or, without the upload dialog:
@@ -42,14 +42,21 @@ app implements against it second.
 - `themes/<id>/theme.ht` — source (static fallback palettes + glass values +
   `shell` markers; no file reads, no extraction)
 - `themes/<id>/plugin.json` — abilities `["theme"]`, entryPoint
-  `CaelestiaTheme`
+  `CaelestiaTheme`; `themes/<id>/build.json` — where the built artifact is
+  published (the install URL in the README points there)
 - `tools/build.dart` — compile → run → validate → package → `dist/index.json`
   (`fvm dart run tools/build.dart`, `--check`, `--watch -t <id>`)
-- `tools/validate.dart`, `tools/inspect.dart`, `tools/install.dart`
+- `tools/validate.dart`, `tools/inspect.dart`, `tools/install.dart`,
+  `tools/export.dart`
+- `lib/validator.dart` + `lib/v3_validator.dart` — the payload rules
+- `schemas/theme.v2.schema.json` (frozen), `schemas/theme.v3.schema.json`
+  (draft), `conformance/` (goldens + broken fixtures + the v3 kitchen sink)
+- `sdk/palette.ht` (seed → both schemes), `sdk/defaults.ht` (neutral palette
+  + merge)
 - `dist/<id>-<version>.smplug` — build outputs (committed)
 - `dist/legacy/` — artifacts that predate the toolchain (plain 1.0.0,
-  glassier 1.1.0, `caelestia-theme.smplug`); kept byte-for-byte because the
-  app's pinned artifact tests point at them
+  glassier 1.1.0/1.2.0, the pre-unification base); kept byte-for-byte
+  because the app's pinned artifact tests point at them
 - `caelestia-plain` — same colors as the glass theme,
   `'background': {'source': 'none'}`: the plugin-side opt-out of the desktop
   backdrop and of the terminal-derived glass (pinned by
@@ -59,6 +66,9 @@ The build runs the theme before packaging it, so a theme that returns nothing
 or a color the app cannot parse fails here instead of on screen. The old
 `compile_plugin.dart` needed the app's package config; the toolchain has its
 own `pubspec.yaml` and needs nothing from the app checkout.
+
+`make build`, `make check`, `make test`, `make conformance` wrap the same
+commands.
 - Current glass values: surfaces `{0.65, 30}`, background
   `{shell, 0.55, 45, #B3FFFFFF}`, radius `{8, 14, 20, 999}`, density `1.0`
 
