@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-10-22T12:03:20.555118Z",
+  "themes": [
+    {
+      "id": "caelestia-glassier",
+      "name": "Caelestia Shell Theme",
+      "author": "Spotube Test",
+      "version": "1.2.0",
+      "entryPoint": "CaelestiaTheme",
+      "abilities": [
+        "theme"
+      ],
+      "file": "caelestia-glassier-1.2.0.smplug",
+      "bytes": 1204,
+      "sha256": "7c0d2b15e95b60c4f4cfaf6c6cf464b6f7de2cec511c8bb267d2a28d24eb07e9",
+      "roles": null
+    },
+    {
+      "id": "caelestia-plain",
+      "name": "Caelestia Plain",
+      "author": "Spotube Test",
+      "version": "1.1.0",
+      "entryPoint": "CaelestiaTheme",
+      "abilities": [
+        "theme"
+      ],
+      "file": "caelestia-plain-1.1.0.smplug",
+      "bytes": 1171,
+      "sha256": "7e0f9d25d160724ed7ac1605ece3e521c588c9a785314e918c7c8ce725392664",
+      "roles": null
+    },
+    {
+      "id": "caelestia-shell",
+      "name": "Caelestia Shell Theme",
+      "author": "Spotube Test",
+      "version": "1.3.0",
+      "entryPoint": "CaelestiaTheme",
+      "abilities": [
+        "theme"
+      ],
+      "file": "caelestia-shell-1.3.0.smplug",
+      "bytes": 1196,
+      "sha256": "7c888c80234e18dbfab2d13be17817ceec8ccbf00b5a8880c44906362378a72f",
+      "roles": null
+    },
+    {
+      "id": "caelestia-theme",
+      "name": "Caelestia Shell Theme",
+      "author": "Spotube Test",
+      "version": "1.1.0",
+      "entryPoint": "CaelestiaTheme",
+      "abilities": [
+        "theme"
+      ],
+      "file": "caelestia-theme-1.1.0.smplug",
+      "bytes": 1194,
+      "sha256": "7f8e04a293c0f611783873b190768cae22b383d08cd18d87be73e861f4661619",
+      "roles": null
+    },
+    {
+      "id": "spotify-shell",
+      "name": "Spotify Shell Theme",
+      "author": "Spotube Test",
+      "version": "1.0.0",
+      "entryPoint": "SpotifyTheme",
+      "abilities": [
+        "theme"
+      ],
+      "file": "spotify-shell-1.0.0.smplug",
+      "bytes": 1227,
+      "sha256": "3c2132960340658f2da16d47e57959cba1ab000ca4539baa878246545539258d",
+      "roles": null
+    }
+  ]
+}
