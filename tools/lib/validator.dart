@@ -100,10 +100,7 @@ ValidationReport validateThemePayload(Map<String, dynamic> payload) {
       issues.add(Issue(
         Severity.warning,
         key,
-        knownTopLevelKeys.contains(key)
-            ? ''
-            : 'not read by a v2 host — ignored, but it will not do anything '
-                'either',
+        'not read by a v2 host — the app ignores this field',
       ));
     }
   }
