@@ -1,0 +1,1 @@
+{"abilities": ["theme"], "apis": [], "author": "Spotube Test", "description": "Spotify-colored shell: inset content panel, icon-only navigation, seek bar below the player. Verification build. DO NOT DISTRIBUTE.", "entryPoint": "SpotifyTheme", "name": "Spotify Shell Theme", "pluginApiVersion": "2.0.0", "version": "1.0.0"}
